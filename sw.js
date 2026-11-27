@@ -1,8 +1,8 @@
 /**
- * sw.js - Service Worker para Operação 100% Offline (PWA)
+ * sw.js - Service Worker para Operação 100% Offline (PWA) e GitHub Pages
  */
 
-const CACHE_NAME = 'ntm-visitas-v2';
+const CACHE_NAME = 'ntm-visitas-v3';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -42,15 +42,26 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-    // Cache first, fallback to network
+    if (event.request.method !== 'GET') return;
+    if (!event.request.url.startsWith(self.location.origin)) return;
+
+    // Network-first com fallback para cache (atualiza fácil no GitHub Pages e funciona offline)
     event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            if (cachedResponse) {
-                return cachedResponse;
+        fetch(event.request).then((networkResponse) => {
+            if (networkResponse && networkResponse.ok) {
+                const responseClone = networkResponse.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseClone);
+                });
             }
-            return fetch(event.request).catch(() => {
-                // Se offline e requisição HTML, retorna index.html
-                if (event.request.headers.get('accept').includes('text/html')) {
+            return networkResponse;
+        }).catch(() => {
+            return caches.match(event.request).then((cachedResponse) => {
+                if (cachedResponse) {
+                    return cachedResponse;
+                }
+                const accept = event.request.headers.get('accept') || '';
+                if (accept.includes('text/html')) {
                     return caches.match('./index.html');
                 }
             });

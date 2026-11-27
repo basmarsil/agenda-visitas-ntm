@@ -75,16 +75,27 @@ Desenvolvido para o **Setor Pedagógico do Núcleo de Tecnologia Municipal (NTM 
 ### Opção 2: PWA / Instalar como Aplicativo
 - No Google Chrome ou Microsoft Edge, você pode clicar no ícone de **"Instalar aplicativo"** na barra de endereços para fixar o sistema na sua Área de Trabalho ou barra de tarefas do Windows.
 
+### Opção 3: Hospedagem no GitHub Pages
+1. **Mantenha exatamente a estrutura de pastas** dentro da raiz do repositório no GitHub (`index.html`, `.nojekyll`, `manifest.json`, `sw.js`, `css/style.css`, `js/*.js`, `assets/*`).
+   - **Atenção:** Se você usar *Upload files* no site do GitHub e subir os arquivos soltos fora das pastas `css/`, `js/` e `assets/` (ou se colocar tudo dentro de uma subpasta extra), a página abrirá sem estilos e sem scripts.
+   - **Jeito mais seguro:** Arraste tudo o que está **dentro** da pasta `agenda-visitas-ntm` de uma só vez (incluindo as pastas `css`, `js` e `assets`) para a área de upload do GitHub, ou publique usando o **GitHub Desktop**.
+2. No repositório no GitHub, vá em **Settings → Pages**.
+3. Em **Build and deployment → Source**, selecione **Deploy from a branch**.
+4. Em **Branch**, escolha `main` e a pasta `/ (root)`, depois clique em **Save**.
+5. Aguarde ~1 minuto e acesse o link gerado (`https://seu-usuario.github.io/nome-do-repositorio/`).
+
 ---
 
 ## 📂 Estrutura de Arquivos
 
 ```
 agenda-visitas-ntm/
+├── .nojekyll                   # Desativa o Jekyll no GitHub Pages
+├── .gitignore                  # Ignora arquivos temporários do sistema
 ├── index.html                  # Interface completa do sistema
 ├── Abrir-Agenda-NTM.bat        # Atalho de inicialização rápida no Windows
-├── manifest.json               # Configuração PWA
-├── sw.js                       # Service Worker para suporte offline contínuo
+├── manifest.json               # Configuração PWA (compatível com subdiretórios)
+├── sw.js                       # Service Worker (network-first + fallback offline)
 ├── css/
 │   └── style.css               # Design moderno, tema tecnologia/educação e folha A4 para impressão
 ├── js/
